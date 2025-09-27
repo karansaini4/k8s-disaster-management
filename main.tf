@@ -1,0 +1,40 @@
+
+module "network" {
+    source = "./modules/network"
+    vpc_cidr = "10.0.0.0/22"
+    public_subnet_cidrs = ["10.0.0.0/24", "10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+    tags = {
+        Environment = "prod"
+        Project = "dr-simulation"
+    }
+}
+
+module "ec2_primary"{
+source = "./modules/ec2-primary"
+ami_id = "ami-0bd4cda58efa33d23"
+instance_type = "t3.micro"
+subnet_id = module.network.public_subnet_ids[0]
+vpc_id = module.network.vpc_id
+key_name = "k8s-master-key-pair"
+}
+
+module "ec2_dr" {
+    source = "./modules/ec2-dr"
+    name = "dr-sim"
+    vpc_id = module.network.vpc_id
+    subnet_ids = module.network.public_subnet_ids
+    master_subnet_id = module.network.public_subnet_ids[1]
+    ami_id = "ami-0bd4cda58efa33d23"
+    master_instance_type = "t3.micro"
+    worker_instance_type = "t3.micro"
+    key_name = "k8s-master-key-pair"
+    k3s_token = ""
+    min_size = 1
+    desired_capacity = 1
+    max_size = 3
+
+    tags = {
+        Project = "dr-simulation"
+        ENV = "dr"
+    }
+}
