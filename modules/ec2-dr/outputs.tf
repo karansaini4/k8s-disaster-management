@@ -32,3 +32,9 @@ output "worker_iam_role"{
     description = "IAM role name for workers"
     value = aws_iam_role.worker_role.name
 }
+
+
+output "public_ip_master_node" {
+    description = "Public IP of the primary EC2 instance"
+    value = aws_instance.master.public_ip
+}

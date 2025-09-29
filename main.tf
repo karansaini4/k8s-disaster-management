@@ -11,8 +11,8 @@ module "network" {
 
 module "ec2_primary"{
 source = "./modules/ec2-primary"
-ami_id = "ami-0bd4cda58efa33d23"
-instance_type = "t3.micro"
+ami_id = "ami-0110792f6b06bc562"
+instance_type = "t3.medium"
 subnet_id = module.network.public_subnet_ids[0]
 vpc_id = module.network.vpc_id
 key_name = "k8s-master-key-pair"
@@ -24,9 +24,9 @@ module "ec2_dr" {
     vpc_id = module.network.vpc_id
     subnet_ids = module.network.public_subnet_ids
     master_subnet_id = module.network.public_subnet_ids[1]
-    ami_id = "ami-0bd4cda58efa33d23"
-    master_instance_type = "t3.micro"
-    worker_instance_type = "t3.micro"
+    ami_id = "ami-0110792f6b06bc562"
+    master_instance_type = "t3.medium"
+    worker_instance_type = "t3.medium"
     key_name = "k8s-master-key-pair"
     k3s_token = ""
     min_size = 1
