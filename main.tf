@@ -38,3 +38,20 @@ module "ec2_dr" {
         ENV = "dr"
     }
 }
+
+module "monitoring" {
+  source = "./modules/monitoring"
+  zone_id  = var.route53_zone_id
+  record_name = var.record_name 
+  primary_ip = module.ec2_primary.public_ip
+  dr_ip = module.ec2_dr.master_public_ip
+  ttl = 60
+  health_check_port = 80
+  health_check_path = "/"
+  request_interval = 30
+  failure_threshold = 3
+  tags = {
+    Project = "dr-simulation"
+    Env     = "prod"
+  }
+}
